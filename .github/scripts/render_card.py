@@ -2,7 +2,7 @@ import json,math,sys,urllib.request as U
 from datetime import datetime,timedelta,timezone
 USER="saumil-codes";API="https://alfa-leetcode-api.onrender.com";WEEKS=62
 TOT={"Easy":960,"Medium":2103,"Hard":966}
-CS,GAP,HX,HY=11,3,34,266;ST=CS+GAP;GX=HX+26
+CS,GAP,HX,HY=12,3,34,262;ST=CS+GAP;GX=HX+26
 LV=["#161B22","#0E4429","#006D32","#26A641","#39D353"]
 def get(p):
  r=U.Request(f"{API}/{USER}/{p}",headers={"User-Agent":"card"})
@@ -19,28 +19,25 @@ stk,act=c.get("streak",0),c.get("totalActiveDays",0)
 days={datetime.fromtimestamp(int(k),timezone.utc).date():v for k,v in json.loads(c["submissionCalendar"]).items()}
 today=datetime.now(timezone.utc).date()
 end=today+timedelta(days=6-((today.weekday()+1)%7));d=end-timedelta(weeks=WEEKS,days=6)
-MGAP=9
-cells=mon=bgs="";x=GX;lastm=None;mstart=GX
+MGAP=8
+cells=mon="";x=HX;lastm=None;mstart=HX;first=True
 while d<=end:
  m=(d+timedelta(days=6)).month
  if m!=lastm:
-  if lastm is not None:
-   bgs+=f'<rect x="{mstart-3}" y="{HY-3}" width="{x-MGAP-mstart+6}" height="{7*ST-GAP+6}" rx="4" fill="#0F141B"/>'
+  if not first:
+   mon+=f'<text x="{(mstart+x-MGAP-CS)/2+CS/2:.0f}" y="{HY+7*ST+14}" text-anchor="middle" fill="#8B949E" font-size="11" font-weight="600">{lastn}</text>'
    x+=MGAP
-  mstart=x
-  mon+=f'<text x="{x}" y="{HY-12}" fill="#7D8694" font-size="10" font-weight="700" letter-spacing=".4">{(d+timedelta(days=6)).strftime("%b")}</text>'
-  lastm=m
+  mstart=x;first=False;lastm=m;lastn=(d+timedelta(days=6)).strftime("%b")
  for r in range(7):
   cur=d+timedelta(days=r);n=days.get(cur,0)
-  if cur<=today:cells+=f'<rect x="{x}" y="{HY+r*ST}" width="{CS}" height="{CS}" rx="2.5" fill="{LV[lvl(n)]}"/>'
+  if cur<=today:cells+=f'<rect x="{x}" y="{HY+r*ST}" width="{CS}" height="{CS}" rx="2" fill="{LV[lvl(n)]}"/>'
  d+=timedelta(days=7);x+=ST
-bgs+=f'<rect x="{mstart-3}" y="{HY-3}" width="{x-GAP-mstart+6}" height="{7*ST-GAP+6}" rx="4" fill="#0F141B"/>'
-gw=x-GAP-GX;W=GX+gw+HX;bx=250;bw=W-bx-HX;R=58;C=2*math.pi*R
-dow="".join(f'<text x="{HX+18}" y="{HY+i*ST+9}" text-anchor="end" fill="#5A6472" font-size="9" font-weight="600">{t}</text>' for i,t in ((1,"Mon"),(3,"Wed"),(5,"Fri")))
-lg="".join(f'<rect x="{W-HX-92+i*15}" y="{HY+7*ST+10}" width="{CS}" height="{CS}" rx="2.5" fill="{co}"/>' for i,co in enumerate(LV))
-leg=(f'<text x="{W-HX-100}" y="{HY+7*ST+20}" text-anchor="end" fill="#5A6472" font-size="10">Less</text>{lg}'
- f'<text x="{W-HX+4}" y="{HY+7*ST+20}" text-anchor="end" fill="#5A6472" font-size="10">More</text>')
-H=HY+7*ST+42
+mon+=f'<text x="{(mstart+x-CS)/2+CS/2:.0f}" y="{HY+7*ST+14}" text-anchor="middle" fill="#8B949E" font-size="11" font-weight="600">{lastn}</text>'
+gw=x-GAP-HX;W=HX+gw+HX;bx=250;bw=W-bx-HX;R=58;C=2*math.pi*R
+dow=""
+lg=""
+leg=''
+H=HY+7*ST+34
 arcs="";off=0
 for i,k in enumerate(K):
  sg=C*CT[k]/tot if tot else 0
@@ -66,10 +63,10 @@ f'<g transform="translate({HX+82},152)"><circle r="{R}" fill="none" stroke="#1B2
 f'<g transform="rotate(-90)" filter="url(#gl)">{arcs}</g>'
 f'<text y="6" text-anchor="middle" fill="#FFF" font-size="40" font-weight="700">{tot}</text>'
 f'<text y="28" text-anchor="middle" fill="#69727F" font-size="11" font-weight="600" letter-spacing="1.6">SOLVED</text></g>{rows}'
-f'<text x="{HX}" y="{HY-36}" fill="#AEB6C4" font-size="13" font-weight="600">Submission activity &#183; last {WEEKS} weeks</text>'
-f'<text x="{W-HX}" y="{HY-36}" text-anchor="end" font-size="13"><tspan fill="#39D353" font-weight="700">{stk}</tspan><tspan fill="#69727F"> day streak &#183; </tspan>'
-f'<tspan fill="#FFF" font-weight="700">{act}</tspan><tspan fill="#69727F"> active days &#183; </tspan>'
-f'<tspan fill="#00E5C9" font-weight="700">{rate}%</tspan><tspan fill="#69727F"> acceptance</tspan></text>'
-f'{bgs}{mon}{dow}{cells}{leg}</svg>')
+f'<text x="{HX}" y="{HY-16}" font-size="13"><tspan fill="#FFF" font-weight="700">{sub}</tspan><tspan fill="#8B949E"> submissions in the past {WEEKS} weeks</tspan></text>'
+f'<text x="{W-HX}" y="{HY-16}" text-anchor="end" font-size="13"><tspan fill="#39D353" font-weight="700">{stk}</tspan><tspan fill="#8B949E"> max streak &#183; </tspan>'
+f'<tspan fill="#FFF" font-weight="700">{act}</tspan><tspan fill="#8B949E"> active days &#183; </tspan>'
+f'<tspan fill="#00E5C9" font-weight="700">{rate}%</tspan><tspan fill="#8B949E"> acceptance</tspan></text>'
+f'{cells}{mon}</svg>')
 open("leetcode.svg","w").write(svg)
 print("rendered",tot,"solved,",stk,"day streak")
