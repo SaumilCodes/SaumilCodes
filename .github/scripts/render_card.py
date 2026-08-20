@@ -1,22 +1,41 @@
-import json,math,sys,urllib.request as U
+import json,math,sys,time,urllib.request as U
 from datetime import datetime,timedelta,timezone
-USER="saumil-codes";API="https://alfa-leetcode-api.onrender.com";WEEKS=62
-TOT={"Easy":960,"Medium":2103,"Hard":966}
-CS,GAP,HX,HY=12,3,34,262;ST=CS+GAP;GX=HX+26
+USER="saumil-codes";WEEKS=62
+CS,GAP,HX,HY=12,3,34,262;ST=CS+GAP
 LV=["#161B22","#0E4429","#006D32","#26A641","#39D353"]
-def get(p):
- r=U.Request(f"{API}/{USER}/{p}",headers={"User-Agent":"card"})
+GQL="""query($u:String!){
+ allQuestionsCount{difficulty count}
+ matchedUser(username:$u){
+  submitStats{acSubmissionNum{difficulty count} totalSubmissionNum{difficulty submissions}}
+  userCalendar{streak totalActiveDays submissionCalendar}}}"""
+def post(url,body,hdr):
+ r=U.Request(url,data=json.dumps(body).encode(),headers=hdr)
  return json.load(U.urlopen(r,timeout=30))
+def fetch():
+ h={"Content-Type":"application/json","Referer":f"https://leetcode.com/u/{USER}/",
+    "User-Agent":"Mozilla/5.0 (compatible; profile-card/1.0)","Origin":"https://leetcode.com"}
+ d=post("https://leetcode.com/graphql",{"query":GQL,"variables":{"u":USER}},h)
+ m=d["data"]["matchedUser"]
+ if not m: raise RuntimeError("user not found")
+ tot={q["difficulty"]:q["count"] for q in d["data"]["allQuestionsCount"]}
+ ac={q["difficulty"]:q["count"] for q in m["submitStats"]["acSubmissionNum"]}
+ sb={q["difficulty"]:q["submissions"] for q in m["submitStats"]["totalSubmissionNum"]}
+ cal=m["userCalendar"]
+ return (
+  {k:ac[k] for k in ("Easy","Medium","Hard")}, ac["All"],
+  {k:tot[k] for k in ("Easy","Medium","Hard")}, sb["All"],
+  cal["streak"] or 0, cal["totalActiveDays"] or 0, json.loads(cal["submissionCalendar"]))
+err=None
+for attempt in range(3):
+ try:
+  CT,tot,TOT,sub,stk,act,cal=fetch();err=None;break
+ except Exception as e:
+  err=e;print(f"attempt {attempt+1} failed: {e}",file=sys.stderr);time.sleep(5*(attempt+1))
+if err: print("ERROR: could not fetch LeetCode data",file=sys.stderr);sys.exit(1)
 def lvl(n):return 0 if n<=0 else 1 if n<=2 else 2 if n<=5 else 3 if n<=9 else 4
-try:s,c=get("solved"),get("calendar")
-except Exception as e:print("fetch failed:",e,file=sys.stderr);sys.exit(0)
-K=("Easy","Medium","Hard");CT={"Easy":s["easySolved"],"Medium":s["mediumSolved"],"Hard":s["hardSolved"]}
-tot=s["solvedProblem"]
-sub=next(d["submissions"] for d in s["totalSubmissionNum"] if d["difficulty"]=="All")
-ac=next(d["submissions"] for d in s["acSubmissionNum"] if d["difficulty"]=="All")
-rate=round(100*ac/sub,1) if sub else 0
-stk,act=c.get("streak",0),c.get("totalActiveDays",0)
-days={datetime.fromtimestamp(int(k),timezone.utc).date():v for k,v in json.loads(c["submissionCalendar"]).items()}
+rate=round(100*tot/sub,1) if sub else 0
+days={datetime.fromtimestamp(int(k),timezone.utc).date():v for k,v in cal.items()}
+K=("Easy","Medium","Hard")
 today=datetime.now(timezone.utc).date()
 end=today+timedelta(days=6-((today.weekday()+1)%7));d=end-timedelta(weeks=WEEKS,days=6)
 MGAP=8
@@ -54,7 +73,7 @@ f'<defs>{G(0,"#00E5C9","#00B8A3")}{G(1,"#FFCE4F","#FFB800")}{G(2,"#FF7A70","#EF4
 f'<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#141922"/><stop offset="1" stop-color="#0B0E13"/></linearGradient>'
 f'<linearGradient id="hr" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FFA116" stop-opacity="0"/><stop offset=".45" stop-color="#FFA116" stop-opacity=".85"/><stop offset="1" stop-color="#FFA116" stop-opacity="0"/></linearGradient>'
 f'<filter id="gl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'
-f'<pattern id="em" x="{GX}" y="{HY}" width="{ST}" height="{ST}" patternUnits="userSpaceOnUse"><rect width="{CS}" height="{CS}" rx="2.5" fill="{LV[0]}"/></pattern></defs>'
+f'</defs>'
 f'<rect width="{W}" height="{H}" rx="16" fill="url(#bg)"/><rect x=".75" y=".75" width="{W-1.5}" height="{H-1.5}" rx="15.25" fill="none" stroke="#222A37" stroke-width="1.5"/>'
 f'<text x="{HX}" y="42" fill="#FFF" font-size="20" font-weight="700">{USER}</text>'
 f'<text x="{W-HX}" y="42" text-anchor="end" fill="#FFA116" font-size="13" font-weight="700" letter-spacing="2">LEETCODE</text>'
