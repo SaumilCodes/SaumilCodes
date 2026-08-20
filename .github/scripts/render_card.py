@@ -38,7 +38,7 @@ days={datetime.fromtimestamp(int(k),timezone.utc).date():v for k,v in cal.items(
 K=("Easy","Medium","Hard")
 today=datetime.now(timezone.utc).date()
 end=today+timedelta(days=6-((today.weekday()+1)%7));d=end-timedelta(weeks=WEEKS,days=6)
-MGAP=8
+MGAP=18
 cells=mon="";x=HX;lastm=None;mstart=HX;first=True
 while d<=end:
  m=(d+timedelta(days=6)).month
