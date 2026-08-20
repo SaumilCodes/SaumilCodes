@@ -2,7 +2,7 @@ import json,math,sys,time,urllib.request as U
 from datetime import datetime,timedelta,timezone
 USER="saumil-codes";WEEKS=62
 CS,GAP,HX,HY=12,3,34,262;ST=CS+GAP
-LV=["#161B22","#0E4429","#006D32","#26A641","#39D353"]
+LV=["#2B313A","#0E4429","#006D32","#26A641","#39D353"]
 GQL="""query($u:String!){
  allQuestionsCount{difficulty count}
  matchedUser(username:$u){
