@@ -15,13 +15,13 @@ jobs:
       - uses: actions/checkout@v4
       - name: Render card
         run: python3 .github/scripts/render_card.py
-      - name: Publish to assets branch
+      - name: Commit if changed
         run: |
-          if [ ! -f leetcode.svg ]; then echo "no card produced, skipping"; exit 0; fi
+          if [ ! -f leetcode.svg ]; then echo "API unavailable - keeping existing card"; exit 0; fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git checkout --orphan assets-tmp
-          git rm -rf --cached . >/dev/null
-          git add -f leetcode.svg
+          git add leetcode.svg
+          if git diff --cached --quiet; then echo "no change"; exit 0; fi
           git commit -m "chore: refresh LeetCode card"
-          git push -f origin assets-tmp:assets
+          git push
+
