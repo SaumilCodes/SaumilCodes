@@ -42,6 +42,23 @@ building the fundamentals properly rather than fast<br><br>
 <img src="https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="VS Code" />
 </p>
 
+</p>
+<br>
+<h3 align="center">What I'm working on</h3>
+<p align="center">
+<b>C++ and data structures &amp; algorithms</b> — solving on LeetCode most days,<br>
+building the fundamentals properly rather than fast<br><br>
+<b>Small front-end projects</b> — <a href="https://github.com/SaumilCodes/deodar-cafe">deodar-cafe</a> · <a href="https://github.com/SaumilCodes/SaumilCodes.github.io">SaumilCodes.github.io</a>
+</p>
+<br>
+<h3 align="center">Tech</h3>
+<p align="center">
+<img src="https://img.shields.io/badge/C%2B%2B-00599C?style=for-the-badge&logo=cplusplus&logoColor=white" alt="C++" />
+<img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white" alt="Git" />
+<img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub" />
+<img src="https://img.shields.io/badge/VS%20Code-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white" alt="VS Code" />
+</p>
+
     <img src="https://raw.githubusercontent.com/SaumilCodes/SaumilCodes/assets/leetcode.svg" alt="LeetCode stats" width="100%" />
   </a>
 </p>
