@@ -14,7 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Render card
-        run: python3 .github/scripts/render_card.py
+        run: |
+          sed -i "s/^MGAP=8$/MGAP=18/" .github/scripts/render_card.py
+          python3 .github/scripts/render_card.py
       - name: Commit if changed
         run: |
           if [ ! -f leetcode.svg ]; then echo "API unavailable - keeping existing card"; exit 0; fi
